@@ -1,0 +1,2 @@
+
+Select * From deconnect.userinfo;
