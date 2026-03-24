@@ -19,7 +19,7 @@ public class MainView extends VerticalLayout {
 
         setAlignItems(Alignment.CENTER);
 
-        add(new Text("Welcome to DEConnect!"));
+        add(new Text("Welcome to DEConnect."));
         add(loginButton);
         add(registerButton);
     }
