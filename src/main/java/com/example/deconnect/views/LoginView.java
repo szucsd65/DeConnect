@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
@@ -19,7 +20,7 @@ import jakarta.annotation.security.PermitAll;
 @Menu(title = "LoginView")
 @AnonymousAllowed
 @PermitAll
-public class LoginView extends Main {
+public class LoginView extends VerticalLayout {
 
     public LoginView() {
         LoginI18n login = LoginI18n.createDefault();
@@ -42,10 +43,11 @@ public class LoginView extends Main {
         loginForm.setI18n(login);
 
         add(loginForm);
-        loginForm.setAction("auth/generateToken");
+        loginForm.setAction(/*"auth/generateToken"*/ "home");
         loginForm.addLoginListener(e ->
-                getUI().ifPresent(ui -> ui.navigate(""))
+                getUI().ifPresent(ui -> ui.navigate("home"))
         );
+        setAlignItems(Alignment.CENTER);
     }
 }
 
