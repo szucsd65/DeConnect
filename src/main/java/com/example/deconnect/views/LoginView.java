@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.Menu;
 import jakarta.annotation.security.PermitAll;
 
-@PageTitle("LoginView")
+@PageTitle("Login")
 @Route(value = "login")
 @Menu(title = "LoginView")
 @AnonymousAllowed
