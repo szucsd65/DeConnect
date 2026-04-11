@@ -17,8 +17,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.annotation.security.PermitAll;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @PageTitle("HomePage")
 @Route(value = "home")
@@ -47,6 +45,7 @@ public class HomePage extends AppLayout {
         }
 
         Button newPostBtn = new Button("Új Bejegyzés");
+        newPostBtn.addClassName("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
         announcementBoard.add(newPostBtn);
         announcementBoard.add(posts);
