@@ -1,6 +1,7 @@
 package com.example.deconnect.views;
 
 import com.example.deconnect.model.Announcement;
+import com.example.deconnect.model.Faculty;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -25,15 +26,26 @@ import java.util.List;
 @AnonymousAllowed
 @PermitAll
 public class HomePage extends AppLayout {
+
     public HomePage() {
         AnnouncementTemplate posts = new AnnouncementTemplate();
+        String[] facultyNames = {"Informatikai Kar", "Gazdaságtudományi Kar", "Zeneművészeti Kar",
+                                    "Állam- és Jogtudományi Kar", "Általános Orvostudományi Kar", "Bölcsészettudományi Kar",
+                                    "Egészségtudományi Kar", "Fogorvostudományi Kar", "Gyermeknevelési és Gyógypedagógiai Kar",
+                                    "Gyógyszerésztudományi Kar", "Mezőgazdaság-, Élelmiszertudományi és Környezetgazdálkodási Kar",
+                                    "Műszaki Kar", "Természettudományi Kar"};
         DrawerToggle toggle = new DrawerToggle();
         H1 title = new H1("DEConnect");
 
         RouterLink profileLink = new RouterLink("Profil", ProfileView.class);
-        RouterLink loginLink = new RouterLink("TestGroup", TestGroup1.class);
         addToNavbar(toggle, title, profileLink);
-        addToDrawer(loginLink);
+
+        for (String facultyName : facultyNames) {
+            Faculty faculty = new Faculty(facultyName);
+            RouterLink facultyLink = new RouterLink(facultyName, TestGroup1.class, facultyName);
+            addToDrawer(facultyLink);
+        }
+
         Button newPostBtn = new Button("Új Bejegyzés");
         VerticalLayout announcementBoard = new VerticalLayout();
         announcementBoard.add(newPostBtn);
