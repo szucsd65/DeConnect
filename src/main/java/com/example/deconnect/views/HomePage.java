@@ -36,17 +36,20 @@ public class HomePage extends AppLayout {
         H1 title = new H1("DEConnect");
 
         RouterLink profileLink = new RouterLink("Profil", ProfileView.class);
+        profileLink.addClassNames("navLink");
         addToNavbar(toggle, title, profileLink);
 
         for (String facultyName : facultyNames) {
             Faculty faculty = new Faculty(facultyName);
             RouterLink facultyLink = new RouterLink(facultyName, TestGroup1.class, facultyName);
+            facultyLink.addClassNames("faculty");
             addToDrawer(facultyLink);
         }
 
         Button newPostBtn = new Button("Új Bejegyzés");
         newPostBtn.addClassName("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
+        posts.addClassNames("messageBoard");
         announcementBoard.add(newPostBtn);
         announcementBoard.add(posts);
 

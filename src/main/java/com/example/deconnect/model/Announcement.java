@@ -1,17 +1,17 @@
 package com.example.deconnect.model;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class Announcement {
-    @Getter
     private String username;
-    @Getter
     private LocalDateTime postedAt;
-    @Getter
     private String message;
 
     public Announcement() {}

@@ -19,11 +19,6 @@ public class AnnouncementTemplate extends VerticalLayout {
     public AnnouncementTemplate() {
         template.addComponentColumn(announcement -> {
             Div post = new Div();
-            post.getStyle()
-                    .set("border", "1px solid #ccc")
-                    .set("border-radius", "12px")
-                    .set("padding", "12px")
-                    .set("margin", "8px 0");
 
             H4 user = new H4(announcement.getUsername());
             Span time = new Span(announcement.getPostedAt().format(
@@ -31,10 +26,10 @@ public class AnnouncementTemplate extends VerticalLayout {
             Paragraph message = new Paragraph(announcement.getMessage());
 
             post.add(user, time, message);
+            post.addClassNames("posts");
             return post;
         }).setHeader("Összes Bejegyzés").setFlexGrow(1);
-        template.getStyle().set("border", "none");
-
+        template.addClassNames("messageBoard");
         template.setItems(items);
         template.setWidthFull();
 

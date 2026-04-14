@@ -27,17 +27,21 @@ public class TestGroup1 extends AppLayout implements  HasUrlParameter<String>{
     public TestGroup1() {
         DrawerToggle toggle = new DrawerToggle();
         Button newPostBtn = new Button("Új Bejegyzés");
+        newPostBtn.addClassNames("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
 
         materialsLink.setText("Tananyagok");
+        materialsLink.addClassNames("contentLink");
         announcementsLink.setText("Bejegyzések");
+        announcementsLink.addClassNames("contentLink");
         activitiesLink.setText("Események");
+        activitiesLink.addClassNames("contentLink");
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
         addToNavbar(toggle, facultyTitle);
 
-        facultyTitle.getStyle().set("backgroundColor", "green");
+        facultyTitle.getStyle();
         announcementBoard.add(newPostBtn);
         announcementBoard.add(facultyPosts);
         setContent(announcementBoard);

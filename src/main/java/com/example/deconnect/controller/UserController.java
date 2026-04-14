@@ -19,7 +19,6 @@ public class UserController {
     private final UserInfoService service;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
     @GetMapping("/welcome")
     public String welcome() {
         return "Hello";
