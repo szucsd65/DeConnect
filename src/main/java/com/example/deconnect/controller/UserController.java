@@ -1,8 +1,7 @@
-package com.example.deconnect.controller;
+/*package com.example.deconnect.controller;
 
 import com.example.deconnect.model.AuthRequest;
 import com.example.deconnect.model.UserInfo;
-import com.example.deconnect.service.JwtService;
 import com.example.deconnect.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +28,7 @@ public class UserController {
         return service.addUser(userInfo);
     }
 
-    /*@PostMapping("/generateToken")
+    @PostMapping("/generateToken")
     public String authAndGetToken(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         if (authentication.isAuthenticated()) {
@@ -37,7 +36,7 @@ public class UserController {
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
-    }*/
+    }
     @PostMapping(value = "/generateToken", consumes = "application/x-www-form-urlencoded")
     public String authAndGetToken(
             @RequestParam("username") String username,
@@ -54,4 +53,4 @@ public class UserController {
         }
     }
 
-}
+}*/

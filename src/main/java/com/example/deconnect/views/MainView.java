@@ -9,7 +9,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.apache.commons.io.input.TeeInputStream;
 import org.springframework.security.access.annotation.Secured;
 
-@Route("/")
+/*@Route("/main")
 @RolesAllowed("ROLE_USER")
 @Secured("ROLE_USER")
 public class MainView extends VerticalLayout {
@@ -25,3 +25,4 @@ public class MainView extends VerticalLayout {
         add(registerButton);
     }
 }
+*/

@@ -4,14 +4,12 @@ import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.UserInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class UserInfoService implements UserDetailsService {
@@ -28,12 +26,8 @@ public class UserInfoService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserInfo> userInfo = repository.findByEmail(username);
-
-        if (userInfo.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        }
-        return new UserInfoDetails(userInfo.get());
+        UserInfo userInfo = repository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Theres no user with username: " + username));
+        return new UserInfoDetails(userInfo);
     }
 
     public String addUser(UserInfo userInfo) {

@@ -35,10 +35,10 @@ vaadin-drawer-toggle::part(button) {
 }
 
 .postBtn {
-    color: #FFF2E1;
-    background-color: #A79277;
-    border-radius: 10%;
-    border-style: double;
+    color: #A79277;
+    background-color: transparent;
+    border-radius: 12px;
+    border: #A79277 2px solid;
 }
 
 .postBtn:hover {
@@ -69,7 +69,11 @@ vaadin-grid::part(header-cell) {
 }
 
 .posts {
-    color: #D1BB9E;
+    color: #A79277;
+    border: #A79277 solid 1px;
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px;
 }
 
 H4 {
@@ -109,3 +113,14 @@ vaadin-login-form.login::part(form) {
     padding: 28px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
+
+.logoutBtn {
+    background-color: transparent;
+    color: #FFF2E1;
+}
+
+.postTemplate {
+    width: 100%;
+    max-width: 1200px;
+}
+

@@ -1,26 +1,21 @@
 package com.example.deconnect.views;
 
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.Menu;
-import jakarta.annotation.security.PermitAll;
 
 @PageTitle("Login")
 @Route(value = "login")
 @Menu(title = "LoginView")
 @AnonymousAllowed
-@PermitAll
 public class LoginView extends VerticalLayout {
+
+    private final LoginForm loginForm = new LoginForm();
 
     public LoginView() {
         LoginI18n login = LoginI18n.createDefault();
@@ -39,15 +34,18 @@ public class LoginView extends VerticalLayout {
                 "Ellenőrizze a felhasználónevét és jelszavát, majd próbálja újra.");
         login.setErrorMessage(i18nErrorMessage);
 
-        LoginForm loginForm = new LoginForm();
         loginForm.setI18n(login);
+        loginForm.setAction("login");
+        setAlignItems(Alignment.CENTER);
 
         add(loginForm);
-        loginForm.setAction(/*"auth/generateToken"*/ "home");
-        loginForm.addLoginListener(e ->
-                getUI().ifPresent(ui -> ui.navigate("home"))
-        );
-        setAlignItems(Alignment.CENTER);
     }
+
+    public void beforeEnter(BeforeEvent e) {
+        if (e.getLocation().getQueryParameters().getParameters().containsKey("error")) {
+            loginForm.setError(true);
+        }
+    }
+
 }
 

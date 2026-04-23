@@ -1,4 +1,4 @@
-package com.example.deconnect.filter;
+/*package com.example.deconnect.filter;
 
 import com.example.deconnect.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -50,4 +50,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
-}
+}*/
