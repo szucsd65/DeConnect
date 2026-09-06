@@ -124,3 +124,10 @@ vaadin-login-form.login::part(form) {
     max-width: 1200px;
 }
 
+vaadin-dialog {
+    background-color: #D1BB9E;
+}
+
+vaadin-dialog > [slot="title"] {
+    color: #A79277;
+}
