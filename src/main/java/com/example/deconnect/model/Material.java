@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,20 +15,21 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event {
+public class Material {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String eventName;
-    private String eventLocation;
     private LocalDateTime postedAt;
     private String message;
-    private LocalDate plannedDate;
+    private String fileName;
+    @Lob
+    @Column(length = Integer.MAX_VALUE)
+    private byte[] data;
     @ElementCollection
     @CollectionTable(
-            name = "event_faculty",
-            joinColumns = @JoinColumn(name = "event_id")
+            name = "material_faculty",
+            joinColumns = @JoinColumn(name = "material_id")
     )
     @Column(name = "faculty")
     private Set<String> faculty = new HashSet<>();

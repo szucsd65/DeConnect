@@ -2,7 +2,9 @@ package com.example.deconnect.views;
 
 import com.example.deconnect.model.Announcement;
 import com.example.deconnect.repository.AnnouncementRepo;
+import com.example.deconnect.repository.EventRepo;
 import com.example.deconnect.service.AnnouncementService;
+import com.example.deconnect.service.EventService;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -32,13 +34,17 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
     private final AuthenticationContext authenticationContext;
     private final AnnouncementService announcementService;
     private final AnnouncementRepo announcementRepo;
+    //private final EventService eventService;
+    //private final EventRepo eventRepo;
 
     private String facultyName;
 
-    public FacultyGroup(AuthenticationContext authenticationContext, AnnouncementService announcementService, AnnouncementRepo announcementRepo) {
+    public FacultyGroup(AuthenticationContext authenticationContext, AnnouncementService announcementService, AnnouncementRepo announcementRepo/*, EventService eventService, EventRepo eventRepo*/) {
         this.authenticationContext = authenticationContext;
         this.announcementService = announcementService;
         this.announcementRepo = announcementRepo;
+        //this.eventRepo = eventRepo;
+        //this.eventService = eventService;
         DrawerToggle toggle = new DrawerToggle();
         Button newPostBtn = new Button("Új Bejegyzés");
         newPostBtn.addClassNames("postBtn");
@@ -71,6 +77,7 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         textWindow.setHeaderTitle("Új Bejegyzés");
 
         TextArea textInput = new TextArea("Szöveg...");
+        textInput.addClassNames("textBox");
         Button save = new Button("Küldés", e -> {
             String text = textInput.getValue();
             Announcement announcement = new Announcement();
@@ -84,6 +91,8 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         });
 
         Button cancel = new Button("Mégse", e -> textWindow.close());
+        save.addClassNames("footerHeader");
+        cancel.addClassNames("footerHeader");
 
         textWindow.add(textInput);
         textWindow.getFooter().add(cancel, save);
@@ -97,8 +106,8 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         facultyTitle.setText(facultyName);
 
         announcementsLink.setRoute(FacultyGroup.class, facultyName);
-        materialsLink.setRoute(FacultyGroup.class, facultyName);
-        activitiesLink.setRoute(FacultyGroup.class, facultyName);
+        materialsLink.setRoute(FacultyMaterialView.class, facultyName);
+        activitiesLink.setRoute(FacultyEventsView.class, facultyName);
 
         loadAnnouncements();
     }

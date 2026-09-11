@@ -8,13 +8,15 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class AnnouncementTemplate extends VerticalLayout {
+import static org.apache.el.lang.ELArithmetic.add;
+
+public class EventTemplate extends VerticalLayout{
     private final VerticalLayout template = new VerticalLayout();
-    private final List<Announcement> items = new ArrayList<>();
     private final List<Event> eventItems = new ArrayList<>();
 
-    public AnnouncementTemplate() {
+    public EventTemplate() {
         setSizeFull();
         setPadding(false);
         setSpacing(true);
@@ -24,27 +26,30 @@ public class AnnouncementTemplate extends VerticalLayout {
         template.setSpacing(true);
         template.addClassNames("postTemplate");
 
-        add(new H4("Üzenetek"), template);
+        add(new H4("Események"), template);
     }
 
-    public void addAnnouncement(Announcement announcement) {
-        items.add(announcement);
+    public void addEvent(Event event) {
+        eventItems.add(event);
 
-        Div post = new Div();
-        post.addClassNames("posts");
-        H4 user = new H4(announcement.getUsername());
+        Div eventPost = new Div();
+        eventPost.addClassNames("posts");
+        H4 user = new H4(event.getUsername());
+        H4 eventName = new H4(event.getEventName());
 
-        Span time = new Span(announcement.getPostedAt().format(
+        Span time = new Span(event.getPostedAt().format(
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        Paragraph message = new Paragraph(announcement.getMessage());
+        Paragraph location = new Paragraph(event.getEventLocation());
+        Paragraph plannedTime = new Paragraph(Objects.toString(event.getPlannedDate(), "Nincs megadott dátum"));
+        Paragraph message = new Paragraph(event.getMessage());
 
-        post.add(user, time, message);
-        template.add(post);
+        eventPost.add(eventName, user, time, location, plannedTime, message);
+        template.add(eventPost);
     }
 
     public void clearContent() {
-        items.clear();
         eventItems.clear();
         template.removeAll();
     }
 }
+
