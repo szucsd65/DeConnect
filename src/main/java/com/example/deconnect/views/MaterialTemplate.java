@@ -2,9 +2,15 @@ package com.example.deconnect.views;
 
 import com.example.deconnect.model.Event;
 import com.example.deconnect.model.Material;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.server.streams.DownloadEvent;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +45,23 @@ public class MaterialTemplate extends VerticalLayout {
         Paragraph message = new Paragraph(material.getMessage());
 
         materialPost.add(user,materialName,  time, message);
+        if (material.getData() != null) {
+            DownloadHandler downloadHandler = DownloadHandler.fromInputStream((e) -> {
+                try {
+                    return new DownloadResponse(
+                            new ByteArrayInputStream(material.getData()),
+                            material.getFileName(),
+                            material.getMime(),
+                            material.getData().length);
+                } catch (Exception k) {
+                    return DownloadResponse.error(500);
+                }
+            });
+            Anchor downloadBtn = new Anchor(downloadHandler, "Letöltés");
+            downloadBtn.getElement().getThemeList().add("button");
+            downloadBtn.addClassNames("materialDownloadBtn");
+            materialPost.add(downloadBtn);
+        }
         template.add(materialPost);
     }
 

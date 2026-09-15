@@ -4,6 +4,9 @@ import com.example.deconnect.model.PrivateMessage;
 import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.PrivateMessageRepo;
 import com.example.deconnect.service.PrivateMessageService;
+import com.example.deconnect.service.UserInfoDetails;
+import com.example.deconnect.service.UserInfoService;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -14,52 +17,50 @@ import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
+import java.util.Set;
 
 @PageTitle("Private Messages")
 @Route(value = "privatemessages")
 @Menu(title = "PrivateMessages")
 @PermitAll
-public class PrivateMessageView extends VerticalLayout {
+public class PrivateMessagesView extends VerticalLayout {
     private final PrivateMessageService privateMessageService;
     private final PrivateMessageRepo privateMessageRepo;
     private UserInfo currentUser;
-    private UserInfo recieverUser;
-
     private VerticalLayout messages = new VerticalLayout();
-    private TextField messageField = new TextField();
 
-    public PrivateMessageView(PrivateMessageService privateMessageService, PrivateMessageRepo privateMessageRepo){
+    public PrivateMessagesView(PrivateMessageService privateMessageService, PrivateMessageRepo privateMessageRepo){
         this.privateMessageService = privateMessageService;
-
-        Button sendBtn = new Button("Send", e -> sendMessage());
-
-        HorizontalLayout input = new HorizontalLayout(messageField, sendBtn);
-
-        add(messages, input);
         this.privateMessageRepo = privateMessageRepo;
-    }
 
-    private void sendMessage(){
-        if (messageField.isEmpty()){
-            return;
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserInfoDetails userInfoDetails = (UserInfoDetails) authentication.getPrincipal();
+        currentUser = privateMessageService.getUserByEmail(userInfoDetails.getEmail());
 
-        privateMessageService.sendMessage(currentUser, recieverUser, messageField.getValue());
-
-        messageField.clear();
         refreshMessages();
+        Button privateMessageBtn = new Button("Privát üzenet küldése", e -> {
+            ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
+            privateChat.open();
+        });
+        privateMessageBtn.addClassNames("postBtn");
+
+        add(privateMessageBtn, messages);
+        messages.setAlignItems(Alignment.CENTER);
     }
 
     private void refreshMessages(){
         messages.removeAll();
 
-        if (currentUser == null || recieverUser == null){
+        if (currentUser == null){
             return;
         }
 
-        List<PrivateMessage> messageList = privateMessageService.getPrivateMessages(currentUser, recieverUser);
+        List<PrivateMessage> messageList = privateMessageService.getUserMessage(currentUser);
 
         for (PrivateMessage privateMessage : messageList){
             HorizontalLayout messageRow = createPrivateMessageComponent(privateMessage);
@@ -69,8 +70,16 @@ public class PrivateMessageView extends VerticalLayout {
 
     private HorizontalLayout createPrivateMessageComponent(PrivateMessage privateMessage){
         HorizontalLayout messageRow = new HorizontalLayout();
-
+        messageRow.add(new Span(privateMessage.getSender().getEmail()));
         messageRow.add(new Span(privateMessage.getMessage()));
+        if (!currentUser.equals(privateMessage.getSender())){
+            Button replyBtn = new Button("Válasz", e -> {
+                ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
+                privateChat.open();
+            });
+            replyBtn.addClassNames("postBtn");
+            messageRow.add(replyBtn);
+        }
 
         if (privateMessage.getSender().equals(currentUser)){
             messageRow.setJustifyContentMode(JustifyContentMode.END);
@@ -79,6 +88,7 @@ public class PrivateMessageView extends VerticalLayout {
             messageRow.setJustifyContentMode(JustifyContentMode.START);
         }
 
+        messageRow.setWidth("600px");
         return messageRow;
     }
 }

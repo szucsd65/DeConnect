@@ -4,6 +4,7 @@ import com.example.deconnect.model.UserInfo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,12 +34,16 @@ public class UserInfoDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

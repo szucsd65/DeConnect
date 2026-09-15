@@ -11,6 +11,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -71,7 +72,6 @@ public class HomePage extends AppLayout {
         AnnouncementTemplate posts = new AnnouncementTemplate();
         EventTemplate eventPosts = new EventTemplate();
         MaterialTemplate materialPosts = new MaterialTemplate();
-        //EventTemplate eventPosts = new EventTemplate();
         String[] facultyNames = {"Informatikai Kar", "Gazdaságtudományi Kar", "Zeneművészeti Kar",
                                     "Állam- és Jogtudományi Kar", "Általános Orvostudományi Kar", "Bölcsészettudományi Kar",
                                     "Egészségtudományi Kar", "Fogorvostudományi Kar", "Gyermeknevelési és Gyógypedagógiai Kar",
@@ -87,15 +87,20 @@ public class HomePage extends AppLayout {
 
         UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class).orElseThrow();
 
-        final UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getUsername()).orElseThrow();
+        final UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail()).orElseThrow();
 
-        Button privateMessageBtn = new Button("Privát üzenet", e -> {
+        Button privateMessageBtn = new Button("Privát üzenet küldése", e -> {
             ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
             privateChat.open();
         });
         privateMessageBtn.addClassNames("navLink");
 
-        addToNavbar(toggle, title, profileLink, privateMessageBtn, logout);
+        Button myPrivateMessagesBtn = new Button("Saját üzeneteim", e -> {
+            getUI().ifPresent(ui -> ui.navigate("privatemessages"));
+        });
+        myPrivateMessagesBtn.addClassNames("navLink");
+
+        addToNavbar(toggle, title, profileLink, privateMessageBtn, myPrivateMessagesBtn, logout);
 
         for (String facultyName : facultyNames) {
             Faculty faculty = new Faculty(facultyName);
@@ -112,9 +117,6 @@ public class HomePage extends AppLayout {
         newMaterialBtn.addClassName("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
         posts.addClassNames("messageBoard");
-        //announcementBoard.add(newPostBtn);
-        //announcementBoard.add(newEventBtn);
-        //announcementBoard.add(newMaterialBtn);
         HorizontalLayout actionBtnGroup = new HorizontalLayout(newPostBtn, newEventBtn, newMaterialBtn);
         announcementBoard.add(actionBtnGroup);
         announcementBoard.add(posts);
@@ -127,7 +129,11 @@ public class HomePage extends AppLayout {
 
         setContent(announcementBoard);
 
+        //Bejelentés
         Dialog textWindow = new Dialog();
+        VerticalLayout announcementContent = new VerticalLayout();
+        announcementContent.setWidthFull();
+        announcementContent.setAlignItems(FlexComponent.Alignment.CENTER);
         textWindow.setHeaderTitle("Új Bejegyzés");
 
         CheckboxGroup<String> facultyGroup = new CheckboxGroup<>();
@@ -135,6 +141,7 @@ public class HomePage extends AppLayout {
         facultyGroup.setItems(Arrays.asList(facultyNames));
 
         TextArea textInput = new TextArea("Szöveg...");
+        textInput.addClassNames("textBox");
         Button save = new Button("Küldés", e -> {
             String text = textInput.getValue();
             Announcement announcement = new Announcement();
@@ -149,15 +156,19 @@ public class HomePage extends AppLayout {
 
         Button cancel = new Button("Mégse", e -> textWindow.close());
 
-        textWindow.add(facultyGroup);
-        textWindow.add(textInput);
+        announcementContent.add(facultyGroup, textInput);
+        textWindow.add(announcementContent);
         textWindow.getFooter().add(cancel, save);
+
 
         newPostBtn.addClickListener(e -> textWindow.open());
         announcementRepo.findAll().forEach(posts::addAnnouncement);
 
         // Esemény
         Dialog eventTextWindow = new Dialog();
+        VerticalLayout eventContent = new VerticalLayout();
+        eventContent.setWidthFull();
+        eventContent.setAlignItems(FlexComponent.Alignment.CENTER);
         eventTextWindow.setHeaderTitle("Új Esemény");
         CheckboxGroup<String> eventFacultyGroup = new CheckboxGroup<>();
         eventFacultyGroup.setLabel("Karok");
@@ -167,8 +178,8 @@ public class HomePage extends AppLayout {
         TextField eventLocationInput = new TextField("Helyszín: ");
         DatePicker plannedDatePicker = new DatePicker("Planned Date");
         TextArea eventTextInput = new TextArea("Szöveg...");
+        eventTextInput.addClassNames("textBox");
         Button eventSave = new Button("Küldés", e -> {
-            //String text = eventTextInput.getValue();
             Event event = new Event();
             event.setEventName(eventNameInput.getValue());
             event.setEventLocation(eventLocationInput.getValue());
@@ -181,23 +192,26 @@ public class HomePage extends AppLayout {
             eventTextWindow.close();
         });
 
-        eventTextWindow.add(eventNameInput);
-        eventTextWindow.add(eventLocationInput);
-        eventTextWindow.add(plannedDatePicker);
-        eventTextWindow.add(eventFacultyGroup);
-        eventTextWindow.add(eventTextInput);
-
         Button eventCancel = new Button("Mégse", e -> eventTextWindow.close());
         eventTextWindow.getFooter().add(eventCancel, eventSave);
+
+
+        eventContent.add(new HorizontalLayout(eventNameInput, eventLocationInput, plannedDatePicker), eventFacultyGroup, eventTextInput);
+        eventTextWindow.add(eventContent);
 
         newEventBtn.addClickListener(e -> eventTextWindow.open());
         eventRepo.findAll().forEach(eventPosts::addEvent);
 
+        //Tananyagok
         Dialog materialTextWindow = new Dialog();
+        VerticalLayout materialContent = new VerticalLayout();
+        materialContent.setWidthFull();
+        materialContent.setAlignItems(FlexComponent.Alignment.CENTER);
         materialTextWindow.setHeaderTitle("Új Tananyag");
 
         TextField materialNameInput = new TextField("Tananyag neve:");
         TextArea materialTextInput = new TextArea("Leírás:");
+        materialTextInput.addClassNames("textBox");
         CheckboxGroup<String> materialFacultyGroup = new CheckboxGroup<>();
         materialFacultyGroup.setLabel("Karok");
         materialFacultyGroup.setItems(Arrays.asList(facultyNames));
@@ -212,7 +226,8 @@ public class HomePage extends AppLayout {
         upload.setMaxFiles(1);
         Button materialSave = new Button("Küldés", e -> {
             Material material = new Material();
-            material.setFileName(materialNameInput.getValue());
+            material.setFileName(uploadedFileName.get());
+            material.setMime(uploadedContentType.get());
             material.setMessage(materialTextInput.getValue());
             material.setFaculty(new HashSet<>(materialFacultyGroup.getValue()));
             material.setData(uploadedData.get());
@@ -222,12 +237,17 @@ public class HomePage extends AppLayout {
             materialTextWindow.close();
         });
 
-        materialTextWindow.add(materialNameInput);
-        materialTextWindow.add(materialTextInput);
-        materialTextWindow.add(materialFacultyGroup);
-        materialTextWindow.add(upload);
+
+        materialContent.add(materialNameInput, materialTextInput, materialFacultyGroup, upload);
+        materialTextWindow.add(materialContent);
 
         Button materialCancel = new Button("Mégse", e -> materialTextWindow.close());
+        materialSave.addClassNames("footerBtns");
+        materialCancel.addClassNames("footerBtns");
+        eventSave.addClassNames("footerBtns");
+        eventCancel.addClassNames("footerBtns");
+        save.addClassNames("footerBtns");
+        cancel.addClassNames("footerBtns");
         materialTextWindow.getFooter().add(materialCancel, materialSave);
 
         newMaterialBtn.addClickListener(e -> materialTextWindow.open());

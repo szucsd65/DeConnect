@@ -10,6 +10,7 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.router.*;
@@ -34,8 +35,6 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
     private final AuthenticationContext authenticationContext;
     private final AnnouncementService announcementService;
     private final AnnouncementRepo announcementRepo;
-    //private final EventService eventService;
-    //private final EventRepo eventRepo;
 
     private String facultyName;
 
@@ -43,8 +42,6 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         this.authenticationContext = authenticationContext;
         this.announcementService = announcementService;
         this.announcementRepo = announcementRepo;
-        //this.eventRepo = eventRepo;
-        //this.eventService = eventService;
         DrawerToggle toggle = new DrawerToggle();
         Button newPostBtn = new Button("Új Bejegyzés");
         newPostBtn.addClassNames("postBtn");
@@ -74,6 +71,9 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         setContent(announcementBoard);
 
         Dialog textWindow = new Dialog();
+        VerticalLayout content = new VerticalLayout();
+        content.setWidthFull();
+        content.setAlignItems(FlexComponent.Alignment.CENTER);
         textWindow.setHeaderTitle("Új Bejegyzés");
 
         TextArea textInput = new TextArea("Szöveg...");
@@ -91,10 +91,11 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         });
 
         Button cancel = new Button("Mégse", e -> textWindow.close());
-        save.addClassNames("footerHeader");
-        cancel.addClassNames("footerHeader");
+        save.addClassNames("footerBtns");
+        cancel.addClassNames("footerBtns");
 
-        textWindow.add(textInput);
+        content.add(textInput);
+        textWindow.add(content);
         textWindow.getFooter().add(cancel, save);
 
         newPostBtn.addClickListener(e -> textWindow.open());

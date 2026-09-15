@@ -25,14 +25,22 @@ public class UserInfoService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserInfo userInfo = repository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Theres no user with username: " + username));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserInfo userInfo = repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Theres no user with username: " + email));
         return new UserInfoDetails(userInfo);
     }
 
     public String addUser(UserInfo userInfo) {
+        if (repository.findByEmail(userInfo.getEmail()).isPresent()){
+            return "Already in use!";
+        }
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+
+        if (userInfo.getRoles() == null || userInfo.getRoles().isEmpty()){
+            userInfo.setRoles("ROLE_USER");
+        }
+
         repository.save(userInfo);
-        return "Added";
+        return "Sikeres Regisztráció!";
     }
 }

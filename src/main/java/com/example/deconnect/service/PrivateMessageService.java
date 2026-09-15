@@ -36,6 +36,10 @@ public class PrivateMessageService {
         return repository.findPrivateMessages(user1, user2);
     }
 
+    public List<PrivateMessage> getUserMessage(UserInfo user){
+        return repository.findUserMessage(user);
+    }
+
     public UserInfo getUserByEmail(String email){
         return userInfoRepo.findByEmail(email.trim()).orElse(null);
     }

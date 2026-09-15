@@ -10,6 +10,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -74,6 +75,9 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
         setContent(announcementBoard);
 
         Dialog eventTextWindow = new Dialog();
+        VerticalLayout content = new VerticalLayout();
+        content.setWidthFull();
+        content.setAlignItems(FlexComponent.Alignment.CENTER);
         eventTextWindow.setHeaderTitle("Új Esemény");
 
         TextField eventNameInput = new TextField("Esemény neve:");
@@ -97,16 +101,16 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
             eventTextWindow.close();
         });
 
-        //eventTextWindow.add(eventNameInput);
-        //eventTextWindow.add(eventLocationInput);
-        //eventTextWindow.add(plannedDatePicker);
-        eventTextWindow.add(nameLocationGroup);
-        eventTextWindow.add(new VerticalLayout(nameLocationGroup, plannedDatePicker));
-        eventTextWindow.add(eventTextInput);
+        content.add(nameLocationGroup);
+        content.add(new VerticalLayout(nameLocationGroup, plannedDatePicker));
+        content.add(eventTextInput);
+        eventTextWindow.add(content);
 
         Button eventCancel = new Button("Mégse", e -> eventTextWindow.close());
-        eventTextWindow.getFooter().add(eventCancel, eventSave);
 
+        eventTextWindow.getFooter().add(eventCancel, eventSave);
+        eventCancel.addClassNames("footerBtns");
+        eventSave.addClassNames("footerBtns");
         newEventBtn.addClickListener(e -> eventTextWindow.open());
     }
 

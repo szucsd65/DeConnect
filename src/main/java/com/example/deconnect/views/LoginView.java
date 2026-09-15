@@ -1,5 +1,8 @@
 package com.example.deconnect.views;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -25,7 +28,7 @@ public class LoginView extends VerticalLayout {
         i18nForm.setUsername("Email");
         i18nForm.setPassword("Jelszó");
         i18nForm.setSubmit("Belépés");
-        i18nForm.setForgotPassword("Elfelejtett jelszó?");
+        i18nForm.setForgotPassword("");
         login.setForm(i18nForm);
 
         LoginI18n.ErrorMessage i18nErrorMessage = login.getErrorMessage();
@@ -36,9 +39,12 @@ public class LoginView extends VerticalLayout {
 
         loginForm.setI18n(login);
         loginForm.setAction("login");
-        setAlignItems(Alignment.CENTER);
 
-        add(loginForm);
+        setAlignItems(Alignment.CENTER);
+        Button registerBtn = new Button("Regisztráció");
+        registerBtn.addClickListener(e -> registerBtn.getUI().ifPresent(ui -> ui.navigate("register")));
+        registerBtn.addClassNames("registerBtn");
+        add(loginForm, registerBtn);
     }
 
     public void beforeEnter(BeforeEvent e) {

@@ -23,6 +23,7 @@ public class Material {
     private LocalDateTime postedAt;
     private String message;
     private String fileName;
+    private String mime;
     @Lob
     @Column(length = Integer.MAX_VALUE)
     private byte[] data;

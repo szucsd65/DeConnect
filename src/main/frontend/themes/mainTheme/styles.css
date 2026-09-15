@@ -86,7 +86,7 @@ vaadin-login-form [slot="submit"] {
 }
 
 vaadin-login-form [slot="forgot-password"] {
-    color: #EAD8C0;
+    color: #A79277;
 }
 
 vaadin-login-form vaadin-text-field::part(label),
@@ -155,19 +155,22 @@ vaadin-dialog-overlay::part(footer) {
     justify-content: center;
     align-items: center;
     background-color: #D1BB9E;
-    color: #FFF2E1;
+    color: #edffe1;
     padding: 5px;
 }
 
-.footerHeader{
+.footerBtns{
     color: #FFF2E1;
     background-color: transparent;
+    border-radius: 10%;
+    padding: 3px;
+    border: solid 3px #FFF2E1;
 }
 
 .textBox{
-    min-width: 200px;
-    min-height: 200px;
-    margin: auto;
+    min-width: 400px;
+    min-height: 300px;
+    width: fit-content;
 }
 
 .nameLoc{
@@ -177,3 +180,17 @@ vaadin-dialog-overlay::part(footer) {
 vaadin-dialog > [slot="title"] {
     color: #ec1414;
 }*/
+.materialDownloadBtn{
+    color: #62523e;
+    text-decoration: none;
+}
+
+.eventExportBtn{
+    color: #62523e;
+    text-decoration: none;
+}
+
+.registerBtn{
+    background-color: #A79277;
+    color: #FFF2E1;
+}

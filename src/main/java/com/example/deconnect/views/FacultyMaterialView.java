@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -83,10 +84,14 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
         setContent(announcementBoard);
 
         Dialog materialTextWindow = new Dialog();
+        VerticalLayout content = new VerticalLayout();
+        content.setWidthFull();
+        content.setAlignItems(FlexComponent.Alignment.CENTER);
         materialTextWindow.setHeaderTitle("Új Tananyag");
 
-        TextField materialNameInput = new TextField("Esemény neve:");
+        TextField materialNameInput = new TextField("Tananyag neve:");
         TextArea materialTextInput = new TextArea("Leírás:");
+        materialTextInput.addClassNames("textBox");
         InMemoryUploadHandler inMemoryHandler = UploadHandler
                 .inMemory((metadata, data) -> {
                     uploadedFileName.set( metadata.fileName());
@@ -98,7 +103,8 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
         upload.setMaxFiles(1);
         Button materialSave = new Button("Küldés", e -> {
             Material material = new Material();
-            material.setFileName(materialNameInput.getValue());
+            material.setFileName(uploadedFileName.get());
+            material.setMime(uploadedContentType.get());
             material.setMessage(materialTextInput.getValue());
             material.setFaculty(new HashSet<>(Set.of(facultyName)));
             material.setData(uploadedData.get());
@@ -109,11 +115,14 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
             materialTextWindow.close();
         });
 
-        materialTextWindow.add(materialNameInput);
-        materialTextWindow.add(materialTextInput);
-        materialTextWindow.add(upload);
+        content.add(materialNameInput);
+        content.add(materialTextInput);
+        content.add(upload);
+        materialTextWindow.add(content);
 
         Button materialCancel = new Button("Mégse", e -> materialTextWindow.close());
+        materialSave.addClassNames("footerBtns");
+        materialCancel.addClassNames("footerBtns");
         materialTextWindow.getFooter().add(materialCancel, materialSave);
 
         newMaterialBtn.addClickListener(e -> materialTextWindow.open());
