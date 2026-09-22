@@ -8,12 +8,11 @@ import com.example.deconnect.service.UserInfoDetails;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-
-import java.util.List;
 
 public class ChatWindow extends Dialog {
     private final PrivateMessageService privateMessageService;
@@ -29,7 +28,7 @@ public class ChatWindow extends Dialog {
         this.currentUser = currentUser;
 
 
-        Button sendBtn = new Button("Küldés", e -> {
+        Button sendBtn = new Button(VaadinIcon.PAPERPLANE.create(), e -> {
             if (messageField.isEmpty()){
                 return;
             }
@@ -49,6 +48,29 @@ public class ChatWindow extends Dialog {
         HorizontalLayout input = new HorizontalLayout(messageField, sendBtn);
         VerticalLayout content = new VerticalLayout();
         content.add(recipientUser, input);
+        content.setAlignItems(FlexComponent.Alignment.CENTER);
+        add(content);
+    }
+
+    public ChatWindow(PrivateMessageService privateMessageService, PrivateMessageRepo privateMessageRepo, UserInfo currentUser, UserInfo recieverUser){
+        this.privateMessageRepo = privateMessageRepo;
+        this.privateMessageService = privateMessageService;
+        this.currentUser = currentUser;
+
+
+        Button sendBtn = new Button(VaadinIcon.PAPERPLANE.create(), e -> {
+            if (messageField.isEmpty()){
+                return;
+            }
+            privateMessageService.sendMessage(currentUser, recieverUser, messageField.getValue());
+
+            messageField.clear();
+            close();
+        });
+        sendBtn.addClassNames("postBtn");
+        HorizontalLayout input = new HorizontalLayout(messageField, sendBtn);
+        VerticalLayout content = new VerticalLayout();
+        content.add(input);
         content.setAlignItems(FlexComponent.Alignment.CENTER);
         add(content);
     }

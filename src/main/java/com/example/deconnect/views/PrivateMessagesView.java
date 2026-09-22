@@ -9,6 +9,7 @@ import com.example.deconnect.service.UserInfoService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -43,7 +44,7 @@ public class PrivateMessagesView extends VerticalLayout {
         currentUser = privateMessageService.getUserByEmail(userInfoDetails.getEmail());
 
         refreshMessages();
-        Button privateMessageBtn = new Button("Privát üzenet küldése", e -> {
+        Button privateMessageBtn = new Button(VaadinIcon.EDIT.create(), e -> {
             ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
             privateChat.open();
         });
@@ -70,12 +71,18 @@ public class PrivateMessagesView extends VerticalLayout {
 
     private HorizontalLayout createPrivateMessageComponent(PrivateMessage privateMessage){
         HorizontalLayout messageRow = new HorizontalLayout();
-        messageRow.add(new Span(privateMessage.getSender().getEmail()));
+        if (currentUser.equals(privateMessage.getSender())){
+            messageRow.add(new Span(privateMessage.getSender().getEmail() + " (Te)"));
+        }
+        else {
+            messageRow.add(new Span(privateMessage.getSender().getEmail()));
+        }
         messageRow.add(new Span(privateMessage.getMessage()));
         if (!currentUser.equals(privateMessage.getSender())){
-            Button replyBtn = new Button("Válasz", e -> {
-                ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
+            Button replyBtn = new Button(VaadinIcon.REPLY.create(), e -> {
+                ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser, privateMessage.getSender());
                 privateChat.open();
+                refreshMessages();
             });
             replyBtn.addClassNames("postBtn");
             messageRow.add(replyBtn);

@@ -5,6 +5,7 @@ import com.example.deconnect.model.Event;
 import com.example.deconnect.service.CalendarService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
@@ -65,9 +66,10 @@ public class EventTemplate extends VerticalLayout{
                     )
             );
 
-            Anchor exportBtn = new Anchor(downloadHandler, "Export");
+            Anchor exportBtn = new Anchor(downloadHandler, "");
             exportBtn.addClassNames("eventExportBtn");
             exportBtn.getElement().getThemeList().add("button");
+            exportBtn.add(VaadinIcon.DOWNLOAD.create());
             eventPost.add(exportBtn);
         }
         template.add(eventPost);

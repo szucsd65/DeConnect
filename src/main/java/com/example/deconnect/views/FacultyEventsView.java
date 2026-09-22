@@ -10,6 +10,7 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -47,7 +48,7 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
         this.eventRepo = eventRepo;
         this.eventService = eventService;
         DrawerToggle toggle = new DrawerToggle();
-        Button newEventBtn = new Button("Új Esemény");
+        Button newEventBtn = new Button(VaadinIcon.CALENDAR.create());
         newEventBtn.addClassNames("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
 
@@ -60,7 +61,7 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
-        Button logout = new Button("Logout", event -> authenticationContext.logout());
+        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
         addToNavbar(toggle, facultyTitle, logout);

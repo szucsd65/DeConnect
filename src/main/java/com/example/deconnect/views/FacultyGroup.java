@@ -10,6 +10,7 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -43,7 +44,7 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
         this.announcementService = announcementService;
         this.announcementRepo = announcementRepo;
         DrawerToggle toggle = new DrawerToggle();
-        Button newPostBtn = new Button("Új Bejegyzés");
+        Button newPostBtn = new Button(VaadinIcon.MEGAPHONE.create());
         newPostBtn.addClassNames("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
 
@@ -56,7 +57,7 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
-        Button logout = new Button("Logout", event -> authenticationContext.logout());
+        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
         addToNavbar(toggle, facultyTitle, logout);

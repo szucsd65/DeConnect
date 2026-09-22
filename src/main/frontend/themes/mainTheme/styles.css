@@ -15,7 +15,7 @@ h1 {
 
 vaadin-app-layout::part(navbar) {
     background-color: #A79277;
-    padding-right: 20px;
+    padding-right: 10px;
     padding-left: 10px;
 }
 
@@ -29,8 +29,8 @@ vaadin-drawer-toggle::part(button) {
 
 .navLink {
     color: #FFF2E1;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
     text-decoration: none;
 }
 
@@ -120,6 +120,8 @@ vaadin-login-form.login::part(form) {
     position: absolute;
     right: 0;
     bottom: 10%;
+    border: solid 1px #FFF2E1;
+    margin: 5px;
 }
 
 .postTemplate {

@@ -11,6 +11,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -82,20 +83,20 @@ public class HomePage extends AppLayout {
 
         RouterLink profileLink = new RouterLink("Profil", ProfileView.class);
         profileLink.addClassNames("navLink");
-        Button logout = new Button("Logout", e -> authenticationContext.logout());
+        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), e -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
         UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class).orElseThrow();
 
         final UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail()).orElseThrow();
 
-        Button privateMessageBtn = new Button("Privát üzenet küldése", e -> {
+        Button privateMessageBtn = new Button(VaadinIcon.EDIT.create(), e -> {
             ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
             privateChat.open();
         });
         privateMessageBtn.addClassNames("navLink");
 
-        Button myPrivateMessagesBtn = new Button("Saját üzeneteim", e -> {
+        Button myPrivateMessagesBtn = new Button(VaadinIcon.ENVELOPE.create(), e -> {
             getUI().ifPresent(ui -> ui.navigate("privatemessages"));
         });
         myPrivateMessagesBtn.addClassNames("navLink");
@@ -109,11 +110,11 @@ public class HomePage extends AppLayout {
             addToDrawer(facultyLink);
         }
 
-        Button newPostBtn = new Button("Új Bejegyzés");
+        Button newPostBtn = new Button(VaadinIcon.MEGAPHONE.create());
         newPostBtn.addClassName("postBtn");
-        Button newEventBtn = new Button("Új Esemény");
+        Button newEventBtn = new Button(VaadinIcon.CALENDAR.create());
         newEventBtn.addClassName("postBtn");
-        Button newMaterialBtn = new Button("Új Tananyag");
+        Button newMaterialBtn = new Button(VaadinIcon.BOOK.create());
         newMaterialBtn.addClassName("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
         posts.addClassNames("messageBoard");

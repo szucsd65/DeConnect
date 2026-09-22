@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -56,7 +57,7 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
         AtomicReference<byte[]> uploadedData = new AtomicReference<>();
 
         DrawerToggle toggle = new DrawerToggle();
-        Button newMaterialBtn = new Button("Új Tananyag");
+        Button newMaterialBtn = new Button(VaadinIcon.BOOK.create());
         newMaterialBtn.addClassNames("postBtn");
         VerticalLayout announcementBoard = new VerticalLayout();
 
@@ -69,7 +70,7 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
-        Button logout = new Button("Logout", event -> authenticationContext.logout());
+        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
         addToNavbar(toggle, facultyTitle, logout);

@@ -4,6 +4,7 @@ import com.example.deconnect.model.Event;
 import com.example.deconnect.model.Material;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.DownloadHandler;
@@ -57,9 +58,10 @@ public class MaterialTemplate extends VerticalLayout {
                     return DownloadResponse.error(500);
                 }
             });
-            Anchor downloadBtn = new Anchor(downloadHandler, "Letöltés");
+            Anchor downloadBtn = new Anchor(downloadHandler, "");
             downloadBtn.getElement().getThemeList().add("button");
             downloadBtn.addClassNames("materialDownloadBtn");
+            downloadBtn.add(VaadinIcon.DOWNLOAD.create());
             materialPost.add(downloadBtn);
         }
         template.add(materialPost);
