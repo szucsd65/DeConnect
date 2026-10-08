@@ -4,7 +4,6 @@ import com.example.deconnect.model.PrivateMessage;
 import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.PrivateMessageRepo;
 import com.example.deconnect.repository.UserInfoRepo;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,10 +29,6 @@ public class PrivateMessageService {
 
         return repository.save(privateMessage);
 
-    }
-
-    public List<PrivateMessage> getPrivateMessages(UserInfo user1, UserInfo user2){
-        return repository.findPrivateMessages(user1, user2);
     }
 
     public List<PrivateMessage> getUserMessage(UserInfo user){

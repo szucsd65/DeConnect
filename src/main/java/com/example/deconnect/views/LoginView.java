@@ -1,22 +1,17 @@
 package com.example.deconnect.views;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEvent;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.Menu;
 
 @PageTitle("Login")
 @Route(value = "login")
 @Menu(title = "LoginView")
 @AnonymousAllowed
-public class LoginView extends VerticalLayout {
+public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
     private final LoginForm loginForm = new LoginForm();
 
@@ -37,21 +32,25 @@ public class LoginView extends VerticalLayout {
                 "Ellenőrizze a felhasználónevét és jelszavát, majd próbálja újra.");
         login.setErrorMessage(i18nErrorMessage);
 
+        i18nErrorMessage.setUsername("Email megadása kötelező");
+        i18nErrorMessage.setPassword("Jelszó megadása kötelező");
+
         loginForm.setI18n(login);
         loginForm.setAction("login");
 
         setAlignItems(Alignment.CENTER);
         Button registerBtn = new Button("Regisztráció");
-        registerBtn.addClickListener(e -> registerBtn.getUI().ifPresent(ui -> ui.navigate("register")));
+        registerBtn.addClickListener(e
+                -> registerBtn.getUI().ifPresent(ui -> ui.navigate("register")));
         registerBtn.addClassNames("registerBtn");
         add(loginForm, registerBtn);
     }
 
-    public void beforeEnter(BeforeEvent e) {
-        if (e.getLocation().getQueryParameters().getParameters().containsKey("error")) {
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        if (beforeEnterEvent.getLocation().getQueryParameters().getParameters().containsKey("error")) {
             loginForm.setError(true);
         }
     }
-
 }
 

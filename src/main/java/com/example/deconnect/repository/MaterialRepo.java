@@ -1,6 +1,5 @@
 package com.example.deconnect.repository;
 
-import com.example.deconnect.model.Event;
 import com.example.deconnect.model.Material;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

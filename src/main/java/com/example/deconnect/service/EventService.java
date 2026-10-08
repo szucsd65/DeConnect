@@ -1,9 +1,7 @@
 package com.example.deconnect.service;
 
-import com.example.deconnect.model.Announcement;
 import com.example.deconnect.model.Event;
 import com.example.deconnect.repository.EventRepo;
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,5 +25,18 @@ public class EventService {
 
     public List<Event> loadByFaculty(String faculty) {
         return repository.findByFaculty(faculty);
+    }
+
+    public String deleteEvent(Event event) {
+        repository.delete(event);
+        return "Esemény sikeresen törölve!";
+    }
+
+    public Event updateEvent(Event event) {
+        return repository.save(event);
+    }
+
+    public List<Event> loadAll() {
+        return repository.findAll();
     }
 }

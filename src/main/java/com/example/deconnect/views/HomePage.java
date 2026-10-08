@@ -10,7 +10,6 @@ import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -25,14 +24,10 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.streams.InMemoryUploadHandler;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.spring.security.AuthenticationContext;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 @PageTitle("HomePage")
@@ -52,6 +47,20 @@ public class HomePage extends AppLayout {
     private final PrivateMessageRepo privateMessageRepo;
     private final UserInfoRepo userInfoRepo;
 
+    private void loadMaterials(MaterialTemplate materialPosts) {
+        materialPosts.clearContent();
+        materialRepo.findAll().forEach(materialPosts::addMaterial);
+    }
+
+    private void loadEvents(EventTemplate eventPosts) {
+        eventPosts.clearContent();
+        eventRepo.findAll().forEach(eventPosts::addEvent);
+    }
+
+    private void loadAnnouncements(AnnouncementTemplate posts) {
+        posts.clearContent();
+        announcementRepo.findAll().forEach(posts::addAnnouncement);
+    }
 
     public HomePage(AuthenticationContext authenticationContext, AnnouncementService announcementService, AnnouncementRepo announcementRepo, EventService eventService,
                     EventRepo eventRepo, MaterialRepo materialRepo, MaterialService materialService, PrivateMessageService privateMessageService, PrivateMessageRepo privateMessageRepo, UserInfoRepo userInfoRepo) {
@@ -70,9 +79,22 @@ public class HomePage extends AppLayout {
         AtomicReference<String> uploadedContentType = new AtomicReference<>();
         AtomicReference<byte[]> uploadedData = new AtomicReference<>();
 
-        AnnouncementTemplate posts = new AnnouncementTemplate();
-        EventTemplate eventPosts = new EventTemplate();
-        MaterialTemplate materialPosts = new MaterialTemplate();
+        UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class).orElseThrow();
+
+        final UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail()).orElseThrow();
+
+        AnnouncementTemplate posts =
+                new AnnouncementTemplate(currentUser, announcementService, () -> {});
+
+        posts.setOnDelete(() -> loadAnnouncements(posts));
+        EventTemplate eventPosts =
+                new EventTemplate(currentUser, eventService, () -> {});
+
+        eventPosts.setOnDelete(() -> loadEvents(eventPosts));
+        MaterialTemplate materialPosts =
+                new MaterialTemplate(currentUser, materialService, () -> {});
+
+        materialPosts.setOnDelete(() -> loadMaterials(materialPosts));
         String[] facultyNames = {"Informatikai Kar", "Gazdaságtudományi Kar", "Zeneművészeti Kar",
                                     "Állam- és Jogtudományi Kar", "Általános Orvostudományi Kar", "Bölcsészettudományi Kar",
                                     "Egészségtudományi Kar", "Fogorvostudományi Kar", "Gyermeknevelési és Gyógypedagógiai Kar",
@@ -81,14 +103,10 @@ public class HomePage extends AppLayout {
         DrawerToggle toggle = new DrawerToggle();
         H1 title = new H1("DEConnect");
 
-        RouterLink profileLink = new RouterLink("Profil", ProfileView.class);
-        profileLink.addClassNames("navLink");
-        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), e -> authenticationContext.logout());
+        Button logout = new Button(VaadinIcon.SIGN_OUT.create(), e
+                -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
-        UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class).orElseThrow();
-
-        final UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail()).orElseThrow();
 
         Button privateMessageBtn = new Button(VaadinIcon.EDIT.create(), e -> {
             ChatWindow privateChat = new ChatWindow(privateMessageService, privateMessageRepo, currentUser);
@@ -101,7 +119,7 @@ public class HomePage extends AppLayout {
         });
         myPrivateMessagesBtn.addClassNames("navLink");
 
-        addToNavbar(toggle, title, profileLink, privateMessageBtn, myPrivateMessagesBtn, logout);
+        addToNavbar(toggle, title, privateMessageBtn, myPrivateMessagesBtn, logout);
 
         for (String facultyName : facultyNames) {
             Faculty faculty = new Faculty(facultyName);
@@ -130,7 +148,7 @@ public class HomePage extends AppLayout {
 
         setContent(announcementBoard);
 
-        //Bejelentés
+        //Bejegyzés
         Dialog textWindow = new Dialog();
         VerticalLayout announcementContent = new VerticalLayout();
         announcementContent.setWidthFull();
@@ -143,13 +161,14 @@ public class HomePage extends AppLayout {
 
         TextArea textInput = new TextArea("Szöveg...");
         textInput.addClassNames("textBox");
-        Button save = new Button("Küldés", e -> {
+        Button save = new Button("Megosztás", e -> {
             String text = textInput.getValue();
             Announcement announcement = new Announcement();
             announcement.setMessage(text);
             announcement.setFaculty(new HashSet<>(facultyGroup.getValue()));
 
             announcementService.saveAnnouncement(announcement);
+            posts.clearContent();
             announcementRepo.findAll().forEach(posts::addAnnouncement);
             textWindow.close();
         });
@@ -163,7 +182,8 @@ public class HomePage extends AppLayout {
 
 
         newPostBtn.addClickListener(e -> textWindow.open());
-        announcementRepo.findAll().forEach(posts::addAnnouncement);
+        //announcementRepo.findAll().forEach(posts::addAnnouncement);
+        announcementService.loadAll().forEach(posts::addAnnouncement);
 
         // Esemény
         Dialog eventTextWindow = new Dialog();
@@ -177,10 +197,10 @@ public class HomePage extends AppLayout {
 
         TextField eventNameInput = new TextField("Esemény neve:");
         TextField eventLocationInput = new TextField("Helyszín: ");
-        DatePicker plannedDatePicker = new DatePicker("Planned Date");
+        DatePicker plannedDatePicker = new DatePicker("Tervezett Időpont:");
         TextArea eventTextInput = new TextArea("Szöveg...");
         eventTextInput.addClassNames("textBox");
-        Button eventSave = new Button("Küldés", e -> {
+        Button eventSave = new Button("Megosztás", e -> {
             Event event = new Event();
             event.setEventName(eventNameInput.getValue());
             event.setEventLocation(eventLocationInput.getValue());
@@ -189,6 +209,7 @@ public class HomePage extends AppLayout {
             event.setPlannedDate(plannedDatePicker.getValue());
 
             eventService.saveEvent(event);
+            eventPosts.clearContent();
             eventRepo.findAll().forEach(eventPosts::addEvent);
             eventTextWindow.close();
         });
@@ -201,7 +222,8 @@ public class HomePage extends AppLayout {
         eventTextWindow.add(eventContent);
 
         newEventBtn.addClickListener(e -> eventTextWindow.open());
-        eventRepo.findAll().forEach(eventPosts::addEvent);
+        //eventRepo.findAll().forEach(eventPosts::addEvent);
+        eventService.loadAll().forEach(eventPosts::addEvent);
 
         //Tananyagok
         Dialog materialTextWindow = new Dialog();
@@ -210,7 +232,6 @@ public class HomePage extends AppLayout {
         materialContent.setAlignItems(FlexComponent.Alignment.CENTER);
         materialTextWindow.setHeaderTitle("Új Tananyag");
 
-        TextField materialNameInput = new TextField("Tananyag neve:");
         TextArea materialTextInput = new TextArea("Leírás:");
         materialTextInput.addClassNames("textBox");
         CheckboxGroup<String> materialFacultyGroup = new CheckboxGroup<>();
@@ -218,14 +239,14 @@ public class HomePage extends AppLayout {
         materialFacultyGroup.setItems(Arrays.asList(facultyNames));
         InMemoryUploadHandler inMemoryHandler = UploadHandler
                 .inMemory((metadata, data) -> {
-                    uploadedFileName.set( metadata.fileName());
+                    uploadedFileName.set(metadata.fileName());
                     uploadedContentType.set(metadata.contentType());
                     uploadedData.set(data);
                 });
         Upload upload = new Upload(inMemoryHandler);
         upload.setWidthFull();
         upload.setMaxFiles(1);
-        Button materialSave = new Button("Küldés", e -> {
+        Button materialSave = new Button("Megosztás", e -> {
             Material material = new Material();
             material.setFileName(uploadedFileName.get());
             material.setMime(uploadedContentType.get());
@@ -234,12 +255,14 @@ public class HomePage extends AppLayout {
             material.setData(uploadedData.get());
 
             materialService.saveMaterial(material);
-            materialRepo.findAll().forEach(materialPosts::addMaterial);
+            materialPosts.clearContent();
+            //materialRepo.findAll().forEach(materialPosts::addMaterial);
+            materialService.loadAll().forEach(materialPosts::addMaterial);
             materialTextWindow.close();
         });
 
 
-        materialContent.add(materialNameInput, materialTextInput, materialFacultyGroup, upload);
+        materialContent.add(materialTextInput, materialFacultyGroup, upload);
         materialTextWindow.add(materialContent);
 
         Button materialCancel = new Button("Mégse", e -> materialTextWindow.close());

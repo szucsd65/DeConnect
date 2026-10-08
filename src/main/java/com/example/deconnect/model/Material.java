@@ -25,7 +25,6 @@ public class Material {
     private String fileName;
     private String mime;
     @Lob
-    @Column(length = Integer.MAX_VALUE)
     private byte[] data;
     @ElementCollection
     @CollectionTable(

@@ -35,6 +35,12 @@ public class WebSecurityConfig {
         http.with(VaadinSecurityConfigurer.vaadin(), configurer -> {
             configurer.loginView(LoginView.class);
         });
+
+        http.formLogin(form -> form
+                .loginPage("/login")
+                .failureUrl("/login?error")
+        );
+
         return http.build();
     }
 

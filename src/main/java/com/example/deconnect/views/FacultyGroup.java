@@ -1,10 +1,11 @@
 package com.example.deconnect.views;
 
 import com.example.deconnect.model.Announcement;
+import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.AnnouncementRepo;
-import com.example.deconnect.repository.EventRepo;
+import com.example.deconnect.repository.UserInfoRepo;
 import com.example.deconnect.service.AnnouncementService;
-import com.example.deconnect.service.EventService;
+import com.example.deconnect.service.UserInfoDetails;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -22,12 +23,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @PageTitle("Group")
-@Route(value = "testGroup")
+@Route(value = "Group")
 @Menu(title = "GroupPage")
 @PermitAll
 public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
     private final H1 facultyTitle = new H1();
-    private final AnnouncementTemplate facultyPosts = new AnnouncementTemplate();
 
     private final RouterLink materialsLink = new RouterLink();
     private final RouterLink announcementsLink = new RouterLink();
@@ -36,13 +36,27 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
     private final AuthenticationContext authenticationContext;
     private final AnnouncementService announcementService;
     private final AnnouncementRepo announcementRepo;
+    private final UserInfoRepo userInfoRepo;
+
+    private final AnnouncementTemplate facultyPosts;
 
     private String facultyName;
 
-    public FacultyGroup(AuthenticationContext authenticationContext, AnnouncementService announcementService, AnnouncementRepo announcementRepo/*, EventService eventService, EventRepo eventRepo*/) {
+    public FacultyGroup(AuthenticationContext authenticationContext, UserInfoRepo userInfoRepo, AnnouncementService announcementService, AnnouncementRepo announcementRepo/*, EventService eventService, EventRepo eventRepo*/) {
         this.authenticationContext = authenticationContext;
         this.announcementService = announcementService;
         this.announcementRepo = announcementRepo;
+        this.userInfoRepo = userInfoRepo;
+
+        UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class)
+                .orElseThrow();
+
+        UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail())
+                .orElseThrow();
+
+        this.facultyPosts = new AnnouncementTemplate(currentUser, announcementService, () -> {});
+
+        this.facultyPosts.setOnDelete(this::loadAnnouncements);
         DrawerToggle toggle = new DrawerToggle();
         Button newPostBtn = new Button(VaadinIcon.MEGAPHONE.create());
         newPostBtn.addClassNames("postBtn");
@@ -57,10 +71,15 @@ public class FacultyGroup extends AppLayout implements  HasUrlParameter<String>{
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
+        Button homeBtn = new Button(VaadinIcon.HOME.create(), e -> {
+            getUI().ifPresent(ui -> ui.navigate("/"));
+        });
+        homeBtn.addClassNames("homeBtn");
+
         Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
-        addToNavbar(toggle, facultyTitle, logout);
+        addToNavbar(toggle, homeBtn, facultyTitle, logout);
 
         facultyTitle.getStyle();
         announcementBoard.add(newPostBtn);

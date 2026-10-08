@@ -30,4 +30,17 @@ public class AnnouncementService {
     public List<Announcement> loadByFaculty(String faculty) {
         return repository.findByFaculty(faculty);
     }
+
+    public String deleteAnnouncement(Announcement announcement) {
+        repository.delete(announcement);
+        return "Bejegyzés sikeresen törölve!";
+    }
+
+    public Announcement updateAnnouncement(Announcement announcement) {
+        return repository.save(announcement);
+    }
+
+    public List<Announcement> loadAll() {
+        return repository.findAll();
+    }
 }

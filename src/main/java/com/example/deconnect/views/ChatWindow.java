@@ -1,13 +1,10 @@
 package com.example.deconnect.views;
 
-import com.example.deconnect.model.PrivateMessage;
 import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.PrivateMessageRepo;
 import com.example.deconnect.service.PrivateMessageService;
-import com.example.deconnect.service.UserInfoDetails;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -19,8 +16,8 @@ public class ChatWindow extends Dialog {
     private final PrivateMessageRepo privateMessageRepo;
     private UserInfo currentUser;
     private UserInfo recieverUser;
-    private TextField recipientUser = new TextField("Címzett Email");
-    private TextField messageField = new TextField();
+    private TextField recipientUser = new TextField("Címzett Email:");
+    private TextField messageField = new TextField("Üzenet:");
 
     public ChatWindow(PrivateMessageService privateMessageService, PrivateMessageRepo privateMessageRepo, UserInfo currentUser){
         this.privateMessageRepo = privateMessageRepo;
@@ -30,6 +27,13 @@ public class ChatWindow extends Dialog {
 
         Button sendBtn = new Button(VaadinIcon.PAPERPLANE.create(), e -> {
             if (messageField.isEmpty()){
+                messageField.setErrorMessage("Az üzenet mező nem lehet üres!");
+                messageField.setInvalid(true);
+                return;
+            }
+            if (recipientUser.isEmpty()){
+                recipientUser.setErrorMessage("A címzett mező nem lehet üres!");
+                recipientUser.setInvalid(true);
                 return;
             }
             recieverUser = privateMessageService.getUserByEmail(recipientUser.getValue());
@@ -60,6 +64,8 @@ public class ChatWindow extends Dialog {
 
         Button sendBtn = new Button(VaadinIcon.PAPERPLANE.create(), e -> {
             if (messageField.isEmpty()){
+                messageField.setErrorMessage("Az üzenet mező nem lehet üres!");
+                messageField.setInvalid(true);
                 return;
             }
             privateMessageService.sendMessage(currentUser, recieverUser, messageField.getValue());

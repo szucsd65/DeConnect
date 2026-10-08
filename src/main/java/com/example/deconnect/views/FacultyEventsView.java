@@ -1,12 +1,14 @@
 package com.example.deconnect.views;
 
 import com.example.deconnect.model.Event;
+import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.EventRepo;
+import com.example.deconnect.repository.UserInfoRepo;
 import com.example.deconnect.service.EventService;
+import com.example.deconnect.service.UserInfoDetails;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
@@ -30,7 +32,6 @@ import java.util.Set;
 @PermitAll
 public class FacultyEventsView extends AppLayout implements HasUrlParameter<String> {
     private final H1 facultyTitle = new H1();
-    private final EventTemplate facultyEvents = new EventTemplate();
 
     private final RouterLink materialsLink = new RouterLink();
     private final RouterLink announcementsLink = new RouterLink();
@@ -39,14 +40,28 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
     private final AuthenticationContext authenticationContext;
     private final EventService eventService;
     private final EventRepo eventRepo;
+    private final UserInfoRepo userInfoRepo;
+
+    private final EventTemplate facultyEvents;
 
     private String facultyName;
 
-    public FacultyEventsView(AuthenticationContext authenticationContext, EventRepo eventRepo, EventService eventService)
+    public FacultyEventsView(AuthenticationContext authenticationContext, UserInfoRepo userInfoRepo, EventRepo eventRepo, EventService eventService)
     {
         this.authenticationContext = authenticationContext;
         this.eventRepo = eventRepo;
         this.eventService = eventService;
+        this.userInfoRepo = userInfoRepo;
+
+        UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class)
+                .orElseThrow();
+
+        UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail())
+                .orElseThrow();
+
+        this.facultyEvents = new EventTemplate(currentUser, eventService, () -> {});
+
+        this.facultyEvents.setOnDelete(this::loadEvents);
         DrawerToggle toggle = new DrawerToggle();
         Button newEventBtn = new Button(VaadinIcon.CALENDAR.create());
         newEventBtn.addClassNames("postBtn");
@@ -61,10 +76,15 @@ public class FacultyEventsView extends AppLayout implements HasUrlParameter<Stri
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
+        Button homeBtn = new Button(VaadinIcon.HOME.create(), e -> {
+            getUI().ifPresent(ui -> ui.navigate("/"));
+        });
+        homeBtn.addClassNames("homeBtn");
+
         Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
-        addToNavbar(toggle, facultyTitle, logout);
+        addToNavbar(toggle, homeBtn, facultyTitle, logout);
 
         facultyTitle.getStyle();
         announcementBoard.add(newEventBtn);

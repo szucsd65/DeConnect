@@ -1,8 +1,6 @@
 package com.example.deconnect.service;
 
-import com.example.deconnect.model.Event;
 import com.example.deconnect.model.Material;
-import com.example.deconnect.repository.EventRepo;
 import com.example.deconnect.repository.MaterialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,5 +25,18 @@ public class MaterialService {
 
     public List<Material> loadByFaculty(String faculty) {
         return repository.findByFaculty(faculty);
+    }
+
+    public String deleteMaterial(Material material) {
+        repository.delete(material);
+        return "Tananyag sikeresen törölve!";
+    }
+
+    public Material updateMaterial(Material material) {
+        return repository.save(material);
+    }
+
+    public List<Material> loadAll() {
+        return repository.findAll();
     }
 }

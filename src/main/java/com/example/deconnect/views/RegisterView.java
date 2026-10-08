@@ -3,18 +3,15 @@ package com.example.deconnect.views;
 import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.service.UserInfoService;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-import javax.management.Notification;
 
 @PageTitle("Register")
 @Route(value = "register")
@@ -60,6 +57,7 @@ public class RegisterView extends VerticalLayout {
             if (result.equals("Already in use!")){
                 emailInput.setErrorMessage("Ez az email már regisztrálva van!");
                 emailInput.setInvalid(true);
+                return;
             }
 
             getUI().ifPresent(ui -> ui.navigate("login"));

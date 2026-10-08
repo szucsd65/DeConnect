@@ -1,15 +1,14 @@
 package com.example.deconnect.views;
 
-import com.example.deconnect.model.Event;
 import com.example.deconnect.model.Material;
-import com.example.deconnect.repository.EventRepo;
+import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.MaterialRepo;
-import com.example.deconnect.service.EventService;
+import com.example.deconnect.repository.UserInfoRepo;
 import com.example.deconnect.service.MaterialService;
+import com.example.deconnect.service.UserInfoDetails;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -22,7 +21,6 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.streams.InMemoryUploadHandler;
 import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.spring.security.AuthenticationContext;
-import io.netty.handler.codec.mqtt.MqttReasonCodes;
 import jakarta.annotation.security.PermitAll;
 
 import java.util.HashSet;
@@ -35,7 +33,6 @@ import java.util.concurrent.atomic.AtomicReference;
 @PermitAll
 public class FacultyMaterialView extends AppLayout implements HasUrlParameter<String> {
     private final H1 facultyTitle = new H1();
-    private final MaterialTemplate facultyMaterials = new MaterialTemplate();
 
     private final RouterLink materialsLink = new RouterLink();
     private final RouterLink announcementsLink = new RouterLink();
@@ -44,14 +41,27 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
     private final AuthenticationContext authenticationContext;
     private final MaterialService materialService;
     private final MaterialRepo materialRepo;
+    private final UserInfoRepo userInfoRepo;
+
+    private final MaterialTemplate facultyMaterials;
 
     private String facultyName;
 
-    public FacultyMaterialView(MaterialRepo materialRepo, AuthenticationContext authenticationContext, MaterialService materialService){
+    public FacultyMaterialView(MaterialRepo materialRepo, AuthenticationContext authenticationContext, MaterialService materialService, UserInfoRepo userInfoRepo){
         this.authenticationContext = authenticationContext;
         this.materialRepo = materialRepo;
         this.materialService = materialService;
+        this.userInfoRepo = userInfoRepo;
 
+        UserInfoDetails userInfoDetails = authenticationContext.getAuthenticatedUser(UserInfoDetails.class)
+                        .orElseThrow();
+
+        UserInfo currentUser = userInfoRepo.findByEmail(userInfoDetails.getEmail())
+                        .orElseThrow();
+
+        this.facultyMaterials = new MaterialTemplate(currentUser, materialService, () -> {});
+
+        this.facultyMaterials.setOnDelete(this::loadMaterials);
         AtomicReference<String> uploadedFileName = new AtomicReference<>();
         AtomicReference<String> uploadedContentType = new AtomicReference<>();
         AtomicReference<byte[]> uploadedData = new AtomicReference<>();
@@ -70,10 +80,15 @@ public class FacultyMaterialView extends AppLayout implements HasUrlParameter<St
 
         addToDrawer(announcementsLink, materialsLink, activitiesLink);
 
+        Button homeBtn = new Button(VaadinIcon.HOME.create(), e -> {
+            getUI().ifPresent(ui -> ui.navigate("/"));
+        });
+        homeBtn.addClassNames("homeBtn");
+
         Button logout = new Button(VaadinIcon.SIGN_OUT.create(), event -> authenticationContext.logout());
         logout.addClassNames("logoutBtn");
 
-        addToNavbar(toggle, facultyTitle, logout);
+        addToNavbar(toggle, homeBtn, facultyTitle, logout);
 
         facultyTitle.getStyle();
         announcementBoard.add(newMaterialBtn);
