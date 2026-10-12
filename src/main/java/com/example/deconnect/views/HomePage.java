@@ -169,7 +169,7 @@ public class HomePage extends AppLayout {
 
             announcementService.saveAnnouncement(announcement);
             posts.clearContent();
-            announcementRepo.findAll().forEach(posts::addAnnouncement);
+            announcementService.loadAll().forEach(posts::addAnnouncement);
             textWindow.close();
         });
         textWindow.addClassNames("announcementWindow");
@@ -182,7 +182,6 @@ public class HomePage extends AppLayout {
 
 
         newPostBtn.addClickListener(e -> textWindow.open());
-        //announcementRepo.findAll().forEach(posts::addAnnouncement);
         announcementService.loadAll().forEach(posts::addAnnouncement);
 
         // Esemény
@@ -210,7 +209,7 @@ public class HomePage extends AppLayout {
 
             eventService.saveEvent(event);
             eventPosts.clearContent();
-            eventRepo.findAll().forEach(eventPosts::addEvent);
+            eventService.loadAll().forEach(eventPosts::addEvent);
             eventTextWindow.close();
         });
 
@@ -222,7 +221,6 @@ public class HomePage extends AppLayout {
         eventTextWindow.add(eventContent);
 
         newEventBtn.addClickListener(e -> eventTextWindow.open());
-        //eventRepo.findAll().forEach(eventPosts::addEvent);
         eventService.loadAll().forEach(eventPosts::addEvent);
 
         //Tananyagok
@@ -256,7 +254,6 @@ public class HomePage extends AppLayout {
 
             materialService.saveMaterial(material);
             materialPosts.clearContent();
-            //materialRepo.findAll().forEach(materialPosts::addMaterial);
             materialService.loadAll().forEach(materialPosts::addMaterial);
             materialTextWindow.close();
         });
@@ -275,7 +272,7 @@ public class HomePage extends AppLayout {
         materialTextWindow.getFooter().add(materialCancel, materialSave);
 
         newMaterialBtn.addClickListener(e -> materialTextWindow.open());
-        materialRepo.findAll().forEach(materialPosts::addMaterial);
+        materialService.loadAll().forEach(materialPosts::addMaterial);
 
     }
 }
