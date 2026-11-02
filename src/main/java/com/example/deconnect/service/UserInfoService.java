@@ -1,5 +1,6 @@
 package com.example.deconnect.service;
 
+import com.example.deconnect.model.Material;
 import com.example.deconnect.model.UserInfo;
 import com.example.deconnect.repository.UserInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service

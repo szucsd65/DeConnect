@@ -148,7 +148,6 @@ public class HomePage extends AppLayout {
 
         setContent(announcementBoard);
 
-        //Bejegyzés
         Dialog textWindow = new Dialog();
         VerticalLayout announcementContent = new VerticalLayout();
         announcementContent.setWidthFull();
@@ -184,7 +183,6 @@ public class HomePage extends AppLayout {
         newPostBtn.addClickListener(e -> textWindow.open());
         announcementService.loadAll().forEach(posts::addAnnouncement);
 
-        // Esemény
         Dialog eventTextWindow = new Dialog();
         VerticalLayout eventContent = new VerticalLayout();
         eventContent.setWidthFull();
@@ -223,7 +221,6 @@ public class HomePage extends AppLayout {
         newEventBtn.addClickListener(e -> eventTextWindow.open());
         eventService.loadAll().forEach(eventPosts::addEvent);
 
-        //Tananyagok
         Dialog materialTextWindow = new Dialog();
         VerticalLayout materialContent = new VerticalLayout();
         materialContent.setWidthFull();
